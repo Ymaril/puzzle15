@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNEXT",
-    "module": "commonjs",
+    "module": "es2015",
     "strict": true,
     "outDir": "public/js/"
   },
