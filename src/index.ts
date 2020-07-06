@@ -1,1 +1,3 @@
-console.log(2);
+import { Game } from './Game';
+
+let game = new Game(4);
