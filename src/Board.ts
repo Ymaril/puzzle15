@@ -2,6 +2,7 @@ import { Coordinates } from "./Coordinates";
 
 export class Board {
   private tiles: SVGRectElement[] = [];
+  public onClick: (coordinates: Coordinates) => void = () => {};
 
   constructor(
     private svg: SVGGraphicsElement,
@@ -9,10 +10,16 @@ export class Board {
     state: number[][]
   ) {
     state.forEach((row, y) => {
-      row.forEach(
-        (value, x) => (this.tiles[value] = this.createTile({ x, y }))
-      );
+      row.forEach((value, x) => this.createTile(value, { x, y }));
     });
+
+    svg.onclick = (e) => {
+      const tile_size = this.getTileSize();
+      this.onClick({
+        x: Math.trunc(e.offsetX / tile_size.width),
+        y: Math.trunc(e.offsetY / tile_size.height),
+      });
+    };
   }
 
   public draw(state: number[][]) {
@@ -21,8 +28,11 @@ export class Board {
     });
   }
 
-  private createTile(coordinates: Coordinates): SVGRectElement {
-    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  private createTile(id: number, coordinates: Coordinates): SVGRectElement {
+    const rect = (this.tiles[id] = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "rect"
+    ));
     const tile_size = this.getTileSize();
     Object.entries({
       x: coordinates.x * tile_size.width,
