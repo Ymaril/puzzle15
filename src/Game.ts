@@ -22,10 +22,10 @@ export class Game {
 
   public move(direction: Direction) {
     const direction_offset = {
-      [Direction.Down]: { x: 0, y: -1 },
-      [Direction.Up]: { x: 0, y: 1 },
-      [Direction.Right]: { x: -1, y: 0 },
-      [Direction.Left]: { x: 1, y: 0 },
+      [Direction.Down]: { x: -1, y: 0 },
+      [Direction.Up]: { x: 1, y: 0 },
+      [Direction.Right]: { x: 0, y: -1 },
+      [Direction.Left]: { x: 0, y: 1 },
     }[direction];
 
     const tile_coordinates = {
