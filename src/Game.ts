@@ -20,6 +20,23 @@ export class Game {
     }
   }
 
+  public shuffle() {
+    const allowed_directions = [
+      Direction.Right,
+      Direction.Left,
+      Direction.Up,
+      Direction.Down,
+    ];
+
+    for (let i = 0; i < 1000; i++) {
+      this.move(
+        allowed_directions[
+          Math.floor(Math.random() * allowed_directions.length)
+        ]
+      );
+    }
+  }
+
   public move(direction: Direction) {
     const direction_offset = {
       [Direction.Down]: { x: -1, y: 0 },
