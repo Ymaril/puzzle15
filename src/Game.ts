@@ -39,10 +39,10 @@ export class Game {
 
   public move(direction: Direction) {
     const direction_offset = {
-      [Direction.Down]: { x: -1, y: 0 },
-      [Direction.Up]: { x: 1, y: 0 },
-      [Direction.Right]: { x: 0, y: -1 },
-      [Direction.Left]: { x: 0, y: 1 },
+      [Direction.Down]: { x: 0, y: -1 },
+      [Direction.Up]: { x: 0, y: 1 },
+      [Direction.Right]: { x: -1, y: 0 },
+      [Direction.Left]: { x: 1, y: 0 },
     }[direction];
 
     const tile_coordinates = {
@@ -51,6 +51,28 @@ export class Game {
     };
 
     return this.swapTiles(this.hole, tile_coordinates);
+  }
+
+  public click(coordinates: Coordinates) {
+    const directions = [
+      { x: 0, y: 1, direction: Direction.Down },
+      { x: 0, y: -1, direction: Direction.Up },
+      { x: 1, y: 0, direction: Direction.Right },
+      { x: -1, y: 0, direction: Direction.Left },
+    ];
+
+    const offset = {
+      x: this.hole.x - coordinates.x,
+      y: this.hole.y - coordinates.y,
+    };
+
+    const direction = directions.find(
+      (direction) => direction.x === offset.x && direction.y === offset.y
+    )?.direction;
+
+    if (direction === undefined) return false;
+
+    return this.move(direction);
   }
 
   private swapTiles(from: Coordinates, to: Coordinates) {
@@ -72,7 +94,7 @@ export class Game {
 
   private setTile(coordinates: Coordinates, value: number) {
     if (this.isCoordsInField(coordinates)) {
-      return (this.board[coordinates.x][coordinates.y] = value);
+      return (this.board[coordinates.y][coordinates.x] = value);
     } else {
       return false;
     }
@@ -80,7 +102,7 @@ export class Game {
 
   private getTile(coordinates: Coordinates) {
     if (this.isCoordsInField(coordinates)) {
-      return this.board[coordinates.x][coordinates.y];
+      return this.board[coordinates.y][coordinates.x];
     }
   }
 
