@@ -50,10 +50,10 @@ export class Game {
       y: this.hole.y + direction_offset.y,
     };
 
-    return this.changeTiles(this.hole, tile_coordinates);
+    return this.swapTiles(this.hole, tile_coordinates);
   }
 
-  private changeTiles(from: Coordinates, to: Coordinates) {
+  private swapTiles(from: Coordinates, to: Coordinates) {
     const from_tile_number = this.getTile(from);
     const to_tile_number = this.getTile(to);
 
