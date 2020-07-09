@@ -5,8 +5,9 @@ import { Direction } from "./Direction";
 const SVG = document.getElementById("field");
 const game = new Game(6);
 const board = new Board(SVG, 6, game.board);
+board.assignImage("image");
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
   const direction = {
     'ArrowRight': Direction.Right,
     'ArrowLeft': Direction.Left,
