@@ -5,7 +5,7 @@ export class Game {
   board: number[][] = [];
   private hole: Coordinates = { x: 0, y: 0 };
 
-  constructor(private size: number) {
+  constructor(public size: number) {
     this.fillDefaultState();
   }
 
@@ -18,6 +18,12 @@ export class Game {
       }
       this.board.push(row);
     }
+  }
+
+  public applyState(state: number[][]) {
+    this.board = state;
+    const hole = this.getHoleCoordinates();
+    if (hole) this.hole = hole;
   }
 
   public shuffle() {
@@ -73,6 +79,14 @@ export class Game {
     if (direction === undefined) return false;
 
     return this.move(direction);
+  }
+
+  private getHoleCoordinates() {
+    for (let y = 0; y < this.board.length; y++) {
+      for (let x = 0; x < this.board[y].length; x++) {
+        if (this.board[y][x] == 0) return { x, y };
+      }
+    }
   }
 
   private swapTiles(from: Coordinates, to: Coordinates) {

@@ -3,10 +3,26 @@ import { Board } from "./Board";
 import { Direction } from "./Direction";
 import { Coordinates } from "./Coordinates";
 
+function getSavedState() {
+  if (window.location.hash) {
+    return JSON.parse(atob(window.location.hash.substr(1)));
+  }
+}
+
+const saved_state = getSavedState();
+
 const SVG = document.getElementById("field");
-const game = new Game(6);
-const board = new Board(SVG, 6, game.board);
+const game = new Game(saved_state?.size || 4);
+const board = new Board(SVG, game.size, game.board);
 board.assignImage("image");
+if (saved_state) game.applyState(saved_state.board);
+
+function redraw() {
+  board.redraw(game.board);
+  window.location.hash = btoa(
+    JSON.stringify({ size: game.size, board: game.board })
+  );
+}
 
 document.addEventListener("keydown", function (event) {
   const direction = {
@@ -16,16 +32,23 @@ document.addEventListener("keydown", function (event) {
     ArrowDown: Direction.Down,
   }[event.key];
 
-  if(direction !== undefined) {
+  if (direction !== undefined) {
     game.move(direction);
-    board.redraw(game.board);
+    redraw();
   }
 });
 
 board.onClick = (coordinates: Coordinates) => {
   game.click(coordinates);
-  board.redraw(game.board);
+  redraw();
 };
 
-game.move(Direction.Left);
+window.onhashchange = () => {
+  const state = getSavedState();
+  if (state) {
+    game.applyState(getSavedState().board);
+    redraw();
+  }
+};
+
 board.redraw(game.board);
