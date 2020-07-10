@@ -11,9 +11,11 @@ function getSavedState() {
 
 const saved_state = getSavedState();
 
+const slider:HTMLInputElement | null = document.querySelector('#myRange');
+slider.value = saved_state.size;
 const SVG = document.getElementById("field");
-const game = new Game(saved_state?.size || 4);
-const board = new Board(SVG, game.size, game.board);
+let game = new Game(saved_state?.size || slider?.value);
+let board = new Board(SVG, game.size, game.board);
 board.assignImage("image");
 if (saved_state) game.applyState(saved_state.board);
 
@@ -42,6 +44,15 @@ board.onClick = (coordinates: Coordinates) => {
   game.click(coordinates);
   redraw();
 };
+
+if(slider) {
+  slider.onchange = function () {
+    game = new Game(this.value);
+    board = new Board(SVG, game.size, game.board);
+    board.assignImage("image");
+    redraw();
+  };
+}
 
 window.onhashchange = () => {
   const state = getSavedState();

@@ -9,6 +9,10 @@ export class Board {
     private size: number,
     state: number[][]
   ) {
+    const patterns = svg.querySelector("defs g");
+    if(patterns) patterns.innerHTML = '';
+    const tiles = svg.querySelectorAll(".tile");
+    if(tiles) tiles.forEach(e => e.remove());
     state.forEach((row, y) =>
       row.forEach((value, x) => value && this.createTile(value, { x, y }))
     );
@@ -87,7 +91,7 @@ export class Board {
         y: -1 * tile.y.baseVal.value,
       }).forEach(([attr, value]) => image.setAttribute(attr, value.toString()));
       pattern.appendChild(image);
-      this.svg.querySelector("defs")?.appendChild(pattern);
+      this.svg.querySelector("defs g")?.appendChild(pattern);
       tile.setAttribute("fill", `url(#${pattern_id})`);
     });
   }
