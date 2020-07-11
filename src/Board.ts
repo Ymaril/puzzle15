@@ -71,9 +71,10 @@ export class Board {
 
   private onBoardClick(e: MouseEvent) {
     const tile_size = this.getTileSize();
+    const board = this.svg.getBoundingClientRect();
     this.onClick({
-      x: Math.trunc(e.offsetX / tile_size.width),
-      y: Math.trunc(e.offsetY / tile_size.height),
+      x: Math.trunc((e.clientX - board.left) / tile_size.width),
+      y: Math.trunc((e.clientY - board.top) / tile_size.height),
     });
   }
 
