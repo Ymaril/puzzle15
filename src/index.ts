@@ -4,20 +4,35 @@ import { Direction } from "./Direction";
 import { Coordinates } from "./Coordinates";
 import { GameState } from "./GameState";
 
+const slider = <HTMLInputElement>document.querySelector("#myRange");
+const SVG = <SVGGraphicsElement>document.querySelector("#board");
+
 function getSavedState(): GameState | undefined {
   if (window.location.hash) {
     return JSON.parse(atob(window.location.hash.substr(1)));
   }
 }
-
 const saved_state = getSavedState();
 
-const slider: HTMLInputElement | null = document.querySelector("#myRange");
-slider.value = saved_state?.size;
-const SVG = document.getElementById("field");
-let game = new Game(slider?.value);
+let game: Game;
+if(saved_state) {
+  slider.value = saved_state.size.toString();
+  game = new Game(saved_state.size);
+  game.applyState(saved_state);
+}
+else {
+  game = new Game(parseInt(slider.value));
+}
+
 let board = new Board(SVG, game.getState());
-if (saved_state) game.applyState(saved_state);
+redraw();
+
+if(!saved_state) {
+  setTimeout(() => {
+    game.shuffle();
+    redraw();
+  }, 1000);
+}
 
 function redraw() {
   const state = game.getState();
@@ -26,12 +41,14 @@ function redraw() {
 }
 
 document.addEventListener("keydown", function (event) {
-  const direction = {
+  const directions: { [index: string]: Direction } = {
     ArrowRight: Direction.Right,
     ArrowLeft: Direction.Left,
     ArrowUp: Direction.Up,
     ArrowDown: Direction.Down,
-  }[event.key];
+  };
+
+  const direction = directions[event.key];
 
   if (direction !== undefined) {
     game.move(direction);
@@ -52,7 +69,7 @@ board.onClick = onBoardClick;
 
 if (slider) {
   slider.onchange = function () {
-    game = new Game(this.value);
+    game = new Game(parseInt(slider.value));
     board = new Board(SVG, game.getState());
     board.onClick = onBoardClick;
     redraw();
@@ -66,5 +83,3 @@ window.onhashchange = () => {
     redraw();
   }
 };
-
-board.redraw(game.getState());
