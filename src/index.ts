@@ -2,8 +2,9 @@ import { Game } from "./Game";
 import { Board } from "./Board";
 import { Direction } from "./Direction";
 import { Coordinates } from "./Coordinates";
+import { GameState } from "./GameState";
 
-function getSavedState() {
+function getSavedState(): GameState | undefined {
   if (window.location.hash) {
     return JSON.parse(atob(window.location.hash.substr(1)));
   }
@@ -11,19 +12,17 @@ function getSavedState() {
 
 const saved_state = getSavedState();
 
-const slider:HTMLInputElement | null = document.querySelector('#myRange');
-slider.value = saved_state.size;
+const slider: HTMLInputElement | null = document.querySelector("#myRange");
+slider.value = saved_state?.size;
 const SVG = document.getElementById("field");
-let game = new Game(saved_state?.size || slider?.value);
-let board = new Board(SVG, game.size, game.board);
-board.assignImage("image");
-if (saved_state) game.applyState(saved_state.board);
+let game = new Game(slider?.value);
+let board = new Board(SVG, game.getState());
+if (saved_state) game.applyState(saved_state);
 
 function redraw() {
-  board.redraw(game.board);
-  window.location.hash = btoa(
-    JSON.stringify({ size: game.size, board: game.board })
-  );
+  const state = game.getState();
+  board.redraw(state);
+  window.location.hash = btoa(JSON.stringify(state));
 }
 
 document.addEventListener("keydown", function (event) {
@@ -40,16 +39,17 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-board.onClick = (coordinates: Coordinates) => {
+function onBoardClick(coordinates: Coordinates) {
   game.click(coordinates);
   redraw();
-};
+}
+board.onClick = onBoardClick;
 
-if(slider) {
+if (slider) {
   slider.onchange = function () {
     game = new Game(this.value);
-    board = new Board(SVG, game.size, game.board);
-    board.assignImage("image");
+    board = new Board(SVG, game.getState());
+    board.onClick = onBoardClick;
     redraw();
   };
 }
@@ -57,9 +57,9 @@ if(slider) {
 window.onhashchange = () => {
   const state = getSavedState();
   if (state) {
-    game.applyState(getSavedState().board);
+    game.applyState(state);
     redraw();
   }
 };
 
-board.redraw(game.board);
+board.redraw(game.getState());

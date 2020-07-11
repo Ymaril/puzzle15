@@ -1,15 +1,12 @@
 import { Coordinates } from "./Coordinates";
 import { Direction } from "./Direction";
+import { GameState } from "./GameState";
 
 export class Game {
-  board: number[][] = [];
+  private board: number[][] = [];
   private hole: Coordinates = { x: 0, y: 0 };
 
-  constructor(public size: number) {
-    this.fillDefaultState();
-  }
-
-  public fillDefaultState() {
+  constructor(private size: number) {
     for (let x = 0; x < this.size; x++) {
       let row = [];
 
@@ -20,10 +17,18 @@ export class Game {
     }
   }
 
-  public applyState(state: number[][]) {
-    this.board = state;
+  public applyState(state: GameState) {
+    this.board = state.board;
+    this.size = state.size;
     const hole = this.getHoleCoordinates();
     if (hole) this.hole = hole;
+  }
+
+  public getState(): GameState {
+    return {
+      board: this.board,
+      size: this.size,
+    };
   }
 
   public shuffle() {

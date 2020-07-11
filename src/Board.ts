@@ -1,30 +1,34 @@
 import { Coordinates } from "./Coordinates";
+import { GameState } from "./GameState";
 
 export class Board {
   private tiles: SVGRectElement[] = [];
   public onClick: (coordinates: Coordinates) => void = () => {};
+  private size: number = 0;
 
-  constructor(
-    private svg: SVGGraphicsElement,
-    private size: number,
-    state: number[][]
-  ) {
-    const patterns = svg.querySelector("defs g");
-    if(patterns) patterns.innerHTML = '';
-    const tiles = svg.querySelectorAll(".tile");
-    if(tiles) tiles.forEach(e => e.remove());
-    state.forEach((row, y) =>
-      row.forEach((value, x) => value && this.createTile(value, { x, y }))
-    );
+  constructor(private svg: SVGGraphicsElement, state: GameState) {
+    this.fill(state);
     svg.onclick = (e) => this.onBoardClick(e);
   }
 
-  public redraw(state: number[][]) {
-    state.forEach((row, y) => {
-      row.forEach(
-        (value, x) => value && this.moveTile(this.tiles[value], { x, y })
-      );
-    });
+  private fill(state: GameState) {
+    this.clearSvg();
+    this.size = state.size;
+    state.board.forEach((row, y) =>
+      row.forEach((value, x) => value && this.createTile(value, { x, y }))
+    );
+  }
+
+  public redraw(state: GameState) {
+    if (state.size !== this.size) {
+      this.fill(state);
+    } else {
+      state.board.forEach((row, y) => {
+        row.forEach(
+          (value, x) => value && this.moveTile(this.tiles[value], { x, y })
+        );
+      });
+    }
   }
 
   private createTile(id: number, coordinates: Coordinates): SVGRectElement {
@@ -32,6 +36,7 @@ export class Board {
     Object.entries(this.getDefaultTileAttributes()).forEach(([attr, value]) =>
       rect.setAttribute(attr, value.toString())
     );
+    this.assignImage(rect, id);
     this.moveTile(rect, coordinates);
     this.svg.appendChild(rect);
     this.tiles[id] = rect;
@@ -45,9 +50,14 @@ export class Board {
       width: tile_size.width,
       height: tile_size.height,
       class: "tile",
-      stroke: "#000",
-      "stroke-width": "2px",
     };
+  }
+
+  private clearSvg() {
+    const patterns = this.svg.querySelector("defs g");
+    if (patterns) patterns.innerHTML = "";
+    const tiles = this.svg.querySelectorAll(".tile");
+    if (tiles) tiles.forEach((e) => e.remove());
   }
 
   private moveTile(tile: SVGRectElement, coordinates: Coordinates) {
@@ -67,33 +77,28 @@ export class Board {
     });
   }
 
-  public assignImage(id: string) {
-    this.tiles.forEach((tile, tile_id) => {
-      const pattern = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "pattern"
-      );
-      const pattern_id = `pat${tile_id}`;
-      Object.entries({
-        width: 1,
-        height: 1,
-        id: pattern_id,
-      }).forEach(([attr, value]) =>
-        pattern.setAttribute(attr, value.toString())
-      );
-      const image = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "use"
-      );
-      Object.entries({
-        href: `#${id}`,
-        x: -1 * tile.x.baseVal.value,
-        y: -1 * tile.y.baseVal.value,
-      }).forEach(([attr, value]) => image.setAttribute(attr, value.toString()));
-      pattern.appendChild(image);
-      this.svg.querySelector("defs g")?.appendChild(pattern);
-      tile.setAttribute("fill", `url(#${pattern_id})`);
-    });
+  public assignImage(tile: SVGRectElement, tile_id: number) {
+    const tile_size = this.getTileSize();
+
+    const pattern = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "pattern"
+    );
+    const pattern_id = `pat${tile_id}`;
+    Object.entries({
+      width: 1,
+      height: 1,
+      id: pattern_id,
+    }).forEach(([attr, value]) => pattern.setAttribute(attr, value.toString()));
+    const image = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    Object.entries({
+      href: `#image`,
+      x: -1 * (tile_id % this.size) * tile_size.width,
+      y: -1 * Math.trunc(tile_id / this.size) * tile_size.height,
+    }).forEach(([attr, value]) => image.setAttribute(attr, value.toString()));
+    pattern.appendChild(image);
+    this.svg.querySelector("defs g")?.appendChild(pattern);
+    tile.setAttribute("fill", `url(#${pattern_id})`);
   }
 
   private getTileSize() {
