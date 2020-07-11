@@ -39,9 +39,14 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-function onBoardClick(coordinates: Coordinates) {
-  game.click(coordinates);
-  redraw();
+function onBoardClick(coordinates: Coordinates, tile_id?: number) {
+  if (tile_id) {
+    if (game.click(coordinates)) {
+      redraw();
+    } else {
+      board.shakeTile(tile_id);
+    }
+  }
 }
 board.onClick = onBoardClick;
 
