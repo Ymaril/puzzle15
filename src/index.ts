@@ -56,13 +56,12 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-function onBoardClick(coordinates: Coordinates, tile_id?: number) {
-  if (tile_id) {
-    if (game.click(coordinates)) {
-      redraw();
-    } else {
-      board.shakeTile(tile_id);
-    }
+function onBoardClick(coordinates: Coordinates) {
+  if (game.click(coordinates)) {
+    redraw();
+  } else {
+    const tile_id = game.getTile(coordinates);
+    if(tile_id) board.shakeTile(tile_id);
   }
 }
 board.onClick = onBoardClick;

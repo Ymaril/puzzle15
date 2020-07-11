@@ -3,10 +3,7 @@ import { GameState } from "./GameState";
 
 export class Board {
   private tiles: SVGRectElement[] = [];
-  public onClick: (
-    coordinates: Coordinates,
-    tile_id?: number
-  ) => void = () => {};
+  public onClick: (coordinates: Coordinates) => void = () => {};
   private size: number = 0;
 
   constructor(private svg: SVGGraphicsElement, state: GameState) {
@@ -89,13 +86,11 @@ export class Board {
   private onBoardClick(e: MouseEvent) {
     const tile_size = this.getTileSize();
     const board = this.svg.getBoundingClientRect();
-    const tile_id = this.tiles.indexOf(<SVGRectElement>e.target);
     this.onClick(
       {
         x: Math.trunc((e.clientX - board.left) / tile_size.width),
         y: Math.trunc((e.clientY - board.top) / tile_size.height),
-      },
-      tile_id > 0 ? tile_id : undefined
+      }
     );
   }
 

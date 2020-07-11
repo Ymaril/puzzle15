@@ -119,7 +119,7 @@ export class Game {
     }
   }
 
-  private getTile(coordinates: Coordinates) {
+  public getTile(coordinates: Coordinates) {
     if (this.isCoordsInField(coordinates)) {
       return this.board[coordinates.y][coordinates.x];
     }
