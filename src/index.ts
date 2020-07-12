@@ -26,7 +26,9 @@ if (saved_state) {
 let board = new Board(SVG, game.getState());
 redraw();
 
-if (!saved_state) {
+if (!saved_state) startGame();
+
+function startGame() {
   setTimeout(() => {
     game.shuffle();
     redraw();
@@ -71,6 +73,7 @@ if (slider) {
     board = new Board(SVG, game.getState());
     board.onClick = onBoardClick;
     redraw();
+    startGame();
   };
 }
 
