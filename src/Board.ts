@@ -32,14 +32,14 @@ export class Board {
   }
 
   public shakeTile(tile_id: number) {
-    this.tiles[tile_id].classList.add("shake");
+    this.tiles[tile_id].classList.add("is-shaked");
     const endAnimation = () => {
       this.tiles[tile_id].removeEventListener(
         "webkitAnimationEnd",
         endAnimation
       );
       this.tiles[tile_id].removeEventListener("animationend", endAnimation);
-      this.tiles[tile_id].classList.remove("shake");
+      this.tiles[tile_id].classList.remove("is-shaked");
     };
     this.tiles[tile_id].addEventListener("webkitAnimationEnd", endAnimation);
     this.tiles[tile_id].addEventListener("animationend", endAnimation);
@@ -64,6 +64,8 @@ export class Board {
       width: tile_size.width,
       height: tile_size.height,
       class: "tile",
+      rx: 3,
+      ry: 3
     };
   }
 

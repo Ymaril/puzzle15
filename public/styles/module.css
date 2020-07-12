@@ -1,0 +1,9 @@
+.tile {
+  transition: all 400ms ease-in-out;
+  stroke: #D8FFBC;
+}
+
+.board {
+  background: #D0D0D0;
+  border-radius: 3px;
+}
