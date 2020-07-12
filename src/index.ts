@@ -15,19 +15,18 @@ function getSavedState(): GameState | undefined {
 const saved_state = getSavedState();
 
 let game: Game;
-if(saved_state) {
+if (saved_state) {
   slider.value = saved_state.size.toString();
   game = new Game(saved_state.size);
   game.applyState(saved_state);
-}
-else {
+} else {
   game = new Game(parseInt(slider.value));
 }
 
 let board = new Board(SVG, game.getState());
 redraw();
 
-if(!saved_state) {
+if (!saved_state) {
   setTimeout(() => {
     game.shuffle();
     redraw();
@@ -61,7 +60,7 @@ function onBoardClick(coordinates: Coordinates) {
     redraw();
   } else {
     const tile_id = game.getTile(coordinates);
-    if(tile_id) board.shakeTile(tile_id);
+    if (tile_id) board.shakeTile(tile_id);
   }
 }
 board.onClick = onBoardClick;

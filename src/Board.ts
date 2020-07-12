@@ -65,7 +65,7 @@ export class Board {
       height: tile_size.height,
       class: "tile",
       rx: 3,
-      ry: 3
+      ry: 3,
     };
   }
 
@@ -88,12 +88,10 @@ export class Board {
   private onBoardClick(e: MouseEvent) {
     const tile_size = this.getTileSize();
     const board = this.svg.getBoundingClientRect();
-    this.onClick(
-      {
-        x: Math.trunc((e.clientX - board.left) / tile_size.width),
-        y: Math.trunc((e.clientY - board.top) / tile_size.height),
-      }
-    );
+    this.onClick({
+      x: Math.trunc((e.clientX - board.left) / tile_size.width),
+      y: Math.trunc((e.clientY - board.top) / tile_size.height),
+    });
   }
 
   public assignImage(tile: SVGRectElement, tile_id: number) {
